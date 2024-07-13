@@ -44,10 +44,27 @@ class AMidnightW_TestTaskCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-public:
-	AMidnightW_TestTaskCharacter();
 	
 
+public:
+	AMidnightW_TestTaskCharacter();
+
+	virtual void FellOutOfWorld(const UDamageType& dmgType) override;
+
+	UFUNCTION(BlueprintCallable)
+	void CharacterDie();
+
+	UFUNCTION()
+	void RagdollCharacter();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void DrownAnim();
+
+private:
+	
+	UPROPERTY()
+	APlayerController* PlayerController;
+	
 protected:
 
 	/** Called for movement input */

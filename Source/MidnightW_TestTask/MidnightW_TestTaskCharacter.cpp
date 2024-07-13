@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "MidnightW_PlayerController.h"
+#include "MidnightW_PlayerState.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -54,6 +56,29 @@ AMidnightW_TestTaskCharacter::AMidnightW_TestTaskCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void AMidnightW_TestTaskCharacter::FellOutOfWorld(const UDamageType& dmgType)
+{
+	//Super::FellOutOfWorld(dmgType);
+	CharacterDie();
+	DrownAnim();
+}
+
+void AMidnightW_TestTaskCharacter::CharacterDie()
+{
+	RagdollCharacter();
+	Cast<AMidnightW_PlayerController>(PlayerController)->Die();
+	DisableInput(PlayerController);
+}
+
+void AMidnightW_TestTaskCharacter::RagdollCharacter()
+{
+	GetMesh()->SetSimulatePhysics(true);
+}
+
+void AMidnightW_TestTaskCharacter::DrownAnim_Implementation()
+{
+}
+
 void AMidnightW_TestTaskCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -66,7 +91,8 @@ void AMidnightW_TestTaskCharacter::BeginPlay()
 void AMidnightW_TestTaskCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	PlayerController = Cast<APlayerController>(Controller);
+	if (PlayerController)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
